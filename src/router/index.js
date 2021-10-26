@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import UserSummary from '@/view/user/UserSummary'
+import UserSummary from '@/view/demo/UserSummary'
 
 Vue.use(Router)
 

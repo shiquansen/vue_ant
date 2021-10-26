@@ -78,3 +78,26 @@
         @import '../assets/styles/mixins.less';
         /* 样式代码 */
     </style>
+
+## 引入axios
+- 安装axios
+    ```
+    npm install axios --save
+- 全局引入
+    ```
+    import axios form axios
+    Vue.prototype.$axios = axios
+- 使用(后续可以封装成utils)
+    ```
+      this.$axios({
+                method:'get',
+                url:    'http://localhost:8090/tUser/getUserList'
+                // data:this.qs.stringify({    //这里是发送给后台的数据
+                //       userId:this.userId,
+                //       token:this.token,
+                // })
+            }).then((response) =>{          //这里使用了ES6的语法
+                console.log(response)       //请求成功返回的数据
+            }).catch(
+                (error) =>console.log(error)
+            )     //请求失败返回的数据
