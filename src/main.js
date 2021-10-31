@@ -7,10 +7,18 @@ import router from './router'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 
+import mavonEditor from 'mavon-editor'
+
 import axios from 'axios'
 Vue.prototype.$axios = axios;
 
 Vue.use(Antd)
+Vue.use(mavonEditor)
+
+
+axios.defaults.baseURL = "http://localhost:8090/";
+
+axios.defaults.headers['Content-Type'] = 'application/json;charset=UTF-8';  //配置请求头的内容协商
 
 Vue.config.productionTip = false
 

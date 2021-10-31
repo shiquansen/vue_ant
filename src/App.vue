@@ -1,45 +1,24 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <a-button :icon="style"></a-button>
-    <p>
-      <!-- 使用 router-link 组件来导航. -->
-      <!-- 通过传入 `to` 属性指定链接. -->
-      <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
-      <router-link to="/">Go to Foo</router-link>
-      <router-link to="/12">Go to Bar</router-link>
-  </p>
-  <router-view></router-view>
-  </div>
+     <!-- ant ui国际化（中文） -->
+  <a-config-provider :locale="zh_CN">
+    <div id="app">
+        <router-view></router-view>
+    </div>
+  </a-config-provider>
 </template>
 
 <script>
-export default {
-  name: 'App',
-
-  data () {
-    return {
-      style: 'left'
-    }
-  },
-  computed: {
-    routes () {
-      return this.$store.state.routes
-    },
-    user () {
-      return this.$store.state.currentHr
-    }
-  }
-}
+    import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
+    import moment from 'moment';
+    import 'moment/locale/zh-cn';
+  
+    moment.locale('zh-cn');
+    export default {
+      data() {
+        return {
+          zh_CN,
+        };
+      },
+    };
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
