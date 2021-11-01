@@ -57,7 +57,7 @@
         },
         {
             title: '分类',
-            dataIndex: 'Category.name',
+            dataIndex: 'category.name',
             width: '10%',
             key: 'name',
             align: 'center',

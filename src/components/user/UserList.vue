@@ -3,7 +3,7 @@
     <div>
         <!-- <h4 style="margin-left: 10px;color: #d6a20f;">用户列表页面</h4> -->
         <a-card>
-            <a-row :gutter="20">
+            <a-row :gutter="20" class="row-style">
                 <!-- 搜索框 -->
                 <a-col :span="6">
                     <a-input-search v-model="queryParam.username" placeholder="请输入用户名查找" enter-button allowClear
@@ -23,17 +23,17 @@
                 <!-- 操作按钮 -->
                 <template slot="action" slot-scope="data">
                     <div class="actionSlot">
-                        <a-button type="primary" icon="edit" style="margin: 0 5px;" @click="editUser(data.ID)">编辑
+                        <a-button type="primary" icon="edit" style="margin: 0 5px;" @click="editUser(data.id)">编辑
                         </a-button>
-                        <a-button type="danger" icon="delete" style="margin: 0 5px;" @click="deleteUser(data.ID)">删除
+                        <a-button type="danger" icon="delete" style="margin: 0 5px;" @click="deleteUser(data.id)">删除
                         </a-button>
                         <a-button type="danger" icon="retweet"
                             style="margin: 0 5px;background-color: #8bc34a;border-color: #8bc34a;"
-                            @click="changePwd(data.ID)">改密
+                            @click="changePwd(data.id)">改密
                         </a-button>
                         <a-button type="info" icon="undo"
                             style="margin: 0 5px;background-color: #f3f052;border-color: #f3f052;"
-                            @click="resetPwd(data.ID)">重置
+                            @click="resetPwd(data.id)">重置
                         </a-button>
                     </div>
                 </template>
@@ -111,7 +111,7 @@
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'ID',
+            dataIndex: 'id',
             width: '10%',
             key: 'id',
             align: 'center',
@@ -319,18 +319,15 @@
         methods: {
             // 获取用户列表
             async getUserList() {
-                const { data: res } = await this.$axios.get('/admin/users', {
-                    params: {
-                        username: this.queryParam.username,
-                        pagesize: this.queryParam.pagesize,
-                        pagenum: this.queryParam.pagenum,
-                    },
+                const { data: res } = await this.$axios.post('/user/list?pageSize='+this.queryParam.pagesize+"&pageNo="+this.queryParam.pagenum, 
+                {
+                        username: this.queryParam.username
                 });
-                if (res.status != 200) {
+                if (res.code != 10000) {
                     return this.$message.error(res.message);
                 }
-                this.userlist = res.data;
-                this.pagination.total = res.total;
+                this.userlist = res.data.result;
+                this.pagination.total = res.data.total;
             },
 
             // 处理表格分页改变事件
@@ -355,9 +352,9 @@
                     title: '提示：请再次确认',
                     content: '确定删除此用户吗?一旦删除，不可恢复。',
                     onOk: async () => {
-                        const res = await this.$axios.delete(`/admin/userdelete/${id}`);
+                        const res = await this.$axios.delete(`/user/${id}`);
                         console.log(res);
-                        if (res.status != 200) {
+                        if (res.data.code != 10000) {
                             return this.$message.error(res.message);
                         }
                         this.$message.success('删除成功');
@@ -379,12 +376,12 @@
             addUserOk() {
                 this.$refs.addUserRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
-                    const { data: res } = await this.$axios.post("/admin/user/add", {
+                    const { data: res } = await this.$axios.post("/user", {
                         username: this.newUserInfo.username,
                         password: this.newUserInfo.password,
                         role: this.newUserInfo.role
                     });
-                    if (res.status != 200) {
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.addUserRef.resetFields();
@@ -413,7 +410,7 @@
             // 显示编辑用户对话框
             async editUser(id) {
                 this.editUserVisible = true;
-                const { data: res } = await this.$axios.get(`/admin/user/${id}`);
+                const { data: res } = await this.$axios.get(`user/${id}`);
                 this.userInfo = res.data;
                 this.userInfo.id = id;
             },
@@ -422,12 +419,12 @@
                 this.$refs.editUserRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
 
-                    const { data: res } = await this.$axios.put(`/admin/useredit/${this.userInfo.id}`, {
+                    const { data: res } = await this.$axios.put(`/user`, {
+                        id: this.userInfo.id,
                         username: this.userInfo.username,
-                        // password: this.userInfo.password,
                         role: this.userInfo.role
                     });
-                    if (res.status != 200) {
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.editUserRef.resetFields();
@@ -449,8 +446,10 @@
                     title: '提示：请再次确认',
                     content: '确定重置此用户的密码吗?',
                     onOk: async () => {
-                        const { data: res } = await this.$axios.put(`/admin/user/${id}/reset`);
-                        if (res.status != 200) {
+                        const { data: res } = await this.$axios.put(`/user/reset`, {
+                            id: id
+                        });
+                        if (res.code != 10000) {
                             return this.$message.error(res.message);
                         }
                         this.$message.success('重置密码成功');
@@ -464,8 +463,6 @@
             // 显示修改密码对话框
             async changePwd(id) {
                 this.changePwdVisible = true;
-                const { data: res } = await this.$axios.get(`/admin/user/${id}`);
-                this.userInfoChangePwd = res.data;
                 this.userInfoChangePwd.id = id;
             },
 
@@ -474,12 +471,11 @@
                 this.$refs.changePwdRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
 
-                    const { data: res } = await this.$axios.put(`/admin/changepwd/${this.userInfoChangePwd.id}`, {
-                        username: this.userInfoChangePwd.username,
+                    const { data: res } = await this.$axios.put(`/user`, {
+                        id : this.userInfoChangePwd.id,
                         password: this.userInfoChangePwd.password,
-                        role: this.userInfoChangePwd.role
                     });
-                    if (res.status != 200) {
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.changePwdRef.resetFields();
@@ -504,5 +500,9 @@
         display: flex;
         justify-content: center;
 
+    }
+
+    .row-style{
+        margin-bottom: 20px;
     }
 </style>

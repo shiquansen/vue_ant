@@ -152,14 +152,14 @@
                 this.$refs.articleInfoRef.validate(async (valid) => {
                     if (id == null) {  //添加文章
                         const { data: res } = await this.$axios.post("/article", this.articleInfo);
-                        if (res.status != 10000) {
+                        if (res.code != 10000) {
                             return this.$message.error(res.message);
                         }
                         this.$router.push("/artlist");
                         this.$message.success("添加文章成功");
                     } else {  //更新文章
                         const { data: res } = await this.$axios.put(`/article`, this.articleInfo);
-                        if (res.status != 10000) {
+                        if (res.code != 10000) {
                             return this.$message.error(res.message);
                         }
                         this.$router.push("/artlist");

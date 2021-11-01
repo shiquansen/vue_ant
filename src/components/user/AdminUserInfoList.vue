@@ -6,23 +6,23 @@
             <a-row :gutter="20">
 
                 <!-- 添加按钮 -->
-                <a-col :span="4">
+                <a-col :span="4" class="row-style">
                     <a-button type="primary" @click="addAdminUserInfo()">添加</a-button>
                 </a-col>
             </a-row>
 
             <!-- 信息显示表格 -->
-            <a-table :columns="columns" rowKey="ID" :data-source="adminUserInfolist" bordered>
+            <a-table :columns="columns" rowKey="id" :data-source="adminUserInfolist" bordered>
 
                 <!-- 操作按钮 -->
                 <template slot="action" slot-scope="data">
                     <div class="actionSlot">
                         <a-button type="primary" icon="edit" style="margin: 0 5px;"
-                            @click="showEditAdminUserInfo(data.ID)">
+                            @click="showEditAdminUserInfo(data.id)">
                             编辑
                         </a-button>
                         <a-button type="danger" icon="delete" style="margin: 0 5px;"
-                            @click="deleteAdminUserInfo(data.ID)">
+                            @click="deleteAdminUserInfo(data.id)">
                             删除
                         </a-button>
 
@@ -36,10 +36,10 @@
                 @cancel="addAdminUserInfoCancel">
                 <a-form-model :model="newAdminUserInfo" :rules="addAdminUserInfoRules" ref="addAdminUserInfoRef">
 
-                    <a-form-model-item label="用户id" prop="usrid">
-                        <a-select defaultValue="请选择用户" v-model="newAdminUserInfo.usrid">
+                    <a-form-model-item label="用户id" prop="usrId">
+                        <a-select defaultValue="请选择用户" v-model="newAdminUserInfo.usrId">
                             <!--- @change="userChange"-->
-                            <a-select-option v-for="user in userlist" :key="user.ID" :value="user.ID">
+                            <a-select-option v-for="user in userlist" :key="user.id" :value="user.id">
                                 {{user.username}}
                             </a-select-option>
                         </a-select>
@@ -69,10 +69,10 @@
                 @cancel="editAdminUserInfoCancel">
                 <a-form-model :model="editAdminUserInfoObj" :rules="editAdminUserInfoRules" ref="editAdminUserInfoRef">
 
-                    <a-form-model-item label="用户id" prop="usrid">
-                        <a-select defaultValue="请选择用户" v-model="newAdminUserInfo.usrid">
+                    <a-form-model-item label="用户id" prop="usrId">
+                        <a-select defaultValue="请选择用户" v-model="newAdminUserInfo.usrId">
                             <!--- @change="userChange2"-->
-                            <a-select-option v-for="user in userlist" :key="user.ID" :value="user.ID">
+                            <a-select-option v-for="user in userlist" :key="user.id" :value="user.id">
                                 {{user.username}}
                             </a-select-option>
                         </a-select>
@@ -105,8 +105,8 @@
     // 表格列配置
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'ID',
+            title: 'id',
+            dataIndex: 'id',
             width: '5%',
             key: 'id',
             align: 'center',
@@ -119,10 +119,10 @@
         //     align: 'center',
         // },
         {
-            title: 'usrid',
-            dataIndex: 'usrid',
+            title: 'usrId',
+            dataIndex: 'usrId',
             width: '8%',
-            key: 'usrid',
+            key: 'usrId',
             align: 'center',
         },
         {
@@ -185,21 +185,21 @@
 
                 //新增管理员信息
                 newAdminUserInfo: {
-                    usrid: 0,
-                    nickname: '',
-                    motto: '程序员',
+                    usrId: null,
+                    nickname: null,
+                    motto: '',
                     address: '',
-                    personalInfo: '暂无',
+                    personalInfo: '',
                     personalIntroduction: '一个没有故事的男同学，没什么介绍......'
                 },
                 //编辑管理员信息
                 editAdminUserInfoObj: {
-                    id: 0,
-                    usrid: 0,
+                    id: null,
+                    usrId: null,
                     nickname: '',
-                    motto: '程序员',
+                    motto: '',
                     address: '',
-                    personalInfo: '暂无',
+                    personalInfo: '',
                     personalIntroduction: '一个没有故事的男同学，没什么介绍......'
                 },
 
@@ -210,7 +210,7 @@
                         { required: true, message: '请输入昵称', trigger: 'blur' },
                         { min: 2, max: 12, message: '昵称长度在2到12个字符之间', trigger: 'blur' },
                     ],
-                    usrid: [{ required: true, message: '请选择用户', trigger: 'change' }],
+                    usrId: [{ required: true, message: '请选择用户', trigger: 'change' }],
                     motto: [
                         { required: true, message: '请输入座右铭', trigger: 'blur' },
                         { min: 2, max: 50, message: '昵称长度在2到50个字符之间', trigger: 'blur' },
@@ -226,7 +226,7 @@
                         { required: true, message: '请输入昵称', trigger: 'blur' },
                         { min: 2, max: 12, message: '昵称长度在2到12个字符之间', trigger: 'blur' },
                     ],
-                    usrid: [{ required: true, message: '请选择用户', trigger: 'change' }],
+                    usrId: [{ required: true, message: '请选择用户', trigger: 'change' }],
                     motto: [
                         { required: true, message: '请输入座右铭', trigger: 'blur' },
                         { min: 2, max: 50, message: '昵称长度在2到50个字符之间', trigger: 'blur' },
@@ -256,30 +256,33 @@
         methods: {
             // 获取所有管理员信息
             async getAdminUserInfoList() {
-                const { data: res } = await this.$axios.get('/admin/usersinfo');
-                if (res.status != 200) {
+                const { data: res } = await this.$axios.post('/adminUsrInfo/list?pageSize=10000&pageNo=1', {nickname:""});
+                if (res.code != 10000) {
                     return this.$message.error(res.message);
                 }
-                this.adminUserInfolist = res.data;
+                this.adminUserInfolist = res.data.result;
             },
 
             // 获取用户列表
             async getUserList() {
-                const { data: res } = await this.$axios.get('/admin/allusers');
-                if (res.status != 200) {
+                const { data: res } = await this.$axios.post('/user/list?pageSize=10000&pageNo=1', 
+                {
+                        username: ''
+                });
+                if (res.code != 10000) {
                     return this.$message.error(res.message);
                 }
-                this.userlist = res.data;
+                this.userlist = res.data.result;
             },
 
 
             //// 选择用户
             // userChange(val) {
-            //     this.newAdminUserInfo.usrid = val
+            //     this.newAdminUserInfo.usrId = val
             // },
             //// 编辑时选择用户
             // userChange2(val) {
-            //     this.editAdminUserInfoObj.usrid = val
+            //     this.editAdminUserInfoObj.usrId = val
             // },
 
             // 显示添加对话框
@@ -297,8 +300,8 @@
             addAdminUserInfoOk() {
                 this.$refs.addAdminUserInfoRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
-                    const { data: res } = await this.$axios.post("/admin/userinfo/add", this.newAdminUserInfo);
-                    if (res.status != 200) {
+                    const { data: res } = await this.$axios.post("/adminUsrInfo", this.newAdminUserInfo);
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.addAdminUserInfoRef.resetFields();
@@ -314,9 +317,9 @@
                     title: '提示：请再次确认',
                     content: '确定删除此条信息吗?一旦删除，不可恢复。',
                     onOk: async () => {
-                        const res = await this.$axios.delete(`/admin/userinfodelete/${id}`);
+                        const res = await this.$axios.delete(`/adminUsrInfo/${id}`);
                         console.log(res);
-                        if (res.status != 200) {
+                        if (res.data.code != 10000) {
                             return this.$message.error(res.message);
                         }
                         this.$message.success('删除成功');
@@ -331,7 +334,7 @@
             //显示编辑管理员信息对话框
             async showEditAdminUserInfo(id) {
                 this.editAdminUserInfoVisible = true;
-                const { data: res } = await this.$axios.get(`/admin/userinfo/${id}`);
+                const { data: res } = await this.$axios.get(`/adminUsrInfo/${id}`);
                 this.editAdminUserInfoObj = res.data;
                 this.editAdminUserInfoObj.id = id;
             },
@@ -340,15 +343,16 @@
                 this.$refs.editAdminUserInfoRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
 
-                    const { data: res } = await this.$axios.put(`/admin/userinfoedit/${this.editAdminUserInfoObj.id}`, {
-                        usrid: this.editAdminUserInfoObj.usrid,
+                    const { data: res } = await this.$axios.put(`/adminUsrInfo`, {
+                        id : this.editAdminUserInfoObj.id,
+                        usrId: this.editAdminUserInfoObj.usrId,
                         nickname: this.editAdminUserInfoObj.nickname,
                         motto: this.editAdminUserInfoObj.motto,
                         address: this.editAdminUserInfoObj.address,
                         personalInfo: this.editAdminUserInfoObj.personalInfo,
                         personalIntroduction: this.editAdminUserInfoObj.personalIntroduction
                     });
-                    if (res.status != 200) {
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.editAdminUserInfoRef.resetFields();
@@ -372,5 +376,9 @@
         display: flex;
         justify-content: center;
 
+    }
+
+    .row-style{
+        margin-bottom: 20px;
     }
 </style>

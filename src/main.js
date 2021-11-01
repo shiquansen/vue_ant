@@ -20,6 +20,11 @@ axios.defaults.baseURL = "http://localhost:8090/";
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=UTF-8';  //配置请求头的内容协商
 
+// axios.interceptors.request.use(config => {
+//   config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('token')}`;
+//   return config;
+// });
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

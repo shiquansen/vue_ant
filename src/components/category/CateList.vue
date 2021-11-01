@@ -3,12 +3,12 @@
     <div>
         <!-- <h4 style="margin-left: 10px;color: #d6a20f;">分类列表页面</h4> -->
         <a-card>
-            <a-row :gutter="20">
+            <a-row :gutter="20" class="row-style">
                 <!-- 搜索框 -->
-                <!-- <a-col :span="6">
+                <a-col :span="6">
                     <a-input-search v-model="queryParam.name" placeholder="请输入分类名查找" enter-button allowClear
                         @search="getCateList" />
-                </a-col> -->
+                </a-col>
 
                 <!-- 添加按钮 -->
                 <a-col :span="4">
@@ -147,11 +147,7 @@
         methods: {
             // 获取分类列表
             async getCateList() {
-                const { data: res } = await this.$axios.post('/category/list?pageSize=10000&pageNo=1', {
-                    params: {
-                        name: this.queryParam.name,
-                    },
-                });
+                const { data: res } = await this.$axios.post('/category/list?pageSize=10000&pageNo=1', this.queryParam);
                 if (res.code != 10000) {
                     return this.$message.error(res.message);
                 }
@@ -181,9 +177,9 @@
                     title: '提示：请再次确认',
                     content: '确定删除此分类吗?一旦删除，不可恢复。',
                     onOk: async () => {
-                        const res = await this.$axios.delete(`/admin/catedelete/${id}`);
+                        const res = await this.$axios.delete(`/category/${id}`);
                         console.log(res);
-                        if (res.status != 200) {
+                        if (res.data.code != 10000) {
                             return this.$message.error(res.message);
                         }
                         this.$message.success('删除成功');
@@ -205,10 +201,10 @@
             addCateOk() {
                 this.$refs.addCateRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
-                    const { data: res } = await this.$axios.post("/admin/category/add", {
+                    const { data: res } = await this.$axios.post("/category", {
                         name: this.newCateInfo.name,
                     });
-                    if (res.status != 200) {
+                    if (res.data.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.addCateRef.resetFields();
@@ -226,7 +222,6 @@
 
             // 显示编辑分类对话框
             async editCate(id) {
-                console.log(id);
                 this.editCateVisible = true;
                 const { data: res } = await this.$axios.get(`/category/${id}`);
                 this.cateInfo = res.data;
@@ -237,10 +232,11 @@
                 this.$refs.editCateRef.validate(async (valid) => {
                     if (!valid) return this.$message.error("参数不符合要求请重新输入");
 
-                    const { data: res } = await this.$axios.put(`/admin/category/${this.cateInfo.id}`, {
-                        name: this.cateInfo.name,
-                    });
-                    if (res.status != 200) {
+                    const { data: res } = await this.$axios.put(`/category`, {
+                        id: this.cateInfo.id,
+                        name: this.cateInfo.name}
+                    );
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.editCateRef.resetFields();
@@ -262,5 +258,9 @@
     .actionSlot {
         display: flex;
         justify-content: center;
+    }
+
+    .row-style{
+        margin-bottom: 20px;
     }
 </style>
