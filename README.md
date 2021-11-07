@@ -101,3 +101,6 @@
             }).catch(
                 (error) =>console.log(error)
             )     //请求失败返回的数据
+
+- 打包bug
+    config/index 的 build的 assetsPublicPath value    "/" -> "./", dev部署则不需要

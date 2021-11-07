@@ -204,7 +204,7 @@
                     const { data: res } = await this.$axios.post("/category", {
                         name: this.newCateInfo.name,
                     });
-                    if (res.data.code != 10000) {
+                    if (res.code != 10000) {
                         return this.$message.error(res.message);
                     }
                     this.$refs.addCateRef.resetFields();

@@ -36,7 +36,7 @@
                 @cancel="addAdminUserInfoCancel">
                 <a-form-model :model="newAdminUserInfo" :rules="addAdminUserInfoRules" ref="addAdminUserInfoRef">
 
-                    <a-form-model-item label="用户id" prop="usrId">
+                    <a-form-model-item label="用户名称" prop="usrId">
                         <a-select defaultValue="请选择用户" v-model="newAdminUserInfo.usrId">
                             <!--- @change="userChange"-->
                             <a-select-option v-for="user in userlist" :key="user.id" :value="user.id">
@@ -69,7 +69,7 @@
                 @cancel="editAdminUserInfoCancel">
                 <a-form-model :model="editAdminUserInfoObj" :rules="editAdminUserInfoRules" ref="editAdminUserInfoRef">
 
-                    <a-form-model-item label="用户id" prop="usrId">
+                    <a-form-model-item label="用户名称" prop="usrId">
                         <a-select defaultValue="请选择用户" v-model="newAdminUserInfo.usrId">
                             <!--- @change="userChange2"-->
                             <a-select-option v-for="user in userlist" :key="user.id" :value="user.id">

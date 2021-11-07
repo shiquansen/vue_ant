@@ -65,13 +65,12 @@
                         this.$message.error("输入非法数据，请重新输入！");
                         return;
                     }
-                    const { data: res } = await this.$axios.post("admin/login", this.formdata);
-                    // console.log(res);
-                    if (res.status != 10000) {
+                    const { data: res } = await this.$axios.post("login", this.formdata);
+                    if (res.code != 10000) {
                         this.$message.error(res.message);
                         return;
                     }
-                    window.sessionStorage.setItem("token", res.token);
+                    window.sessionStorage.setItem("token", res.data.token);
                     this.$router.push("/index");
                 });
             }
